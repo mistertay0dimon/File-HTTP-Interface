@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Вход</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2c2c2c;
+            color: white;
+        }
+
+        input[type="submit"] {
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .warning-text {
+            font-size: 12px;
+            color: red;
+            margin-top: 15px;
+            display: block;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Вход в файловое хранилище</h2>
+        <form method="POST">
+            <label>Юзернейм:</label>
+            <input type="text" name="username" required>
+            <label>Пароль:</label>
+            <input type="password" name="password" required>
+            <label class="warning-text">Внимание! Браузер может блокировать скачки файлов из-за незащищенного протокола HTTP. Однако, никто не будет воровать ваши данные или делать другие пакости вам на вашем компьютере.</label>
+            <input type="submit" value="Войти">
+        </form>
+    </div>
+</body>
+</html>

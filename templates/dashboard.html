@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Ваше хранилище файлов</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+        }
+
+        h3 {
+            margin-top: 30px;
+        }
+
+        form {
+            margin-top: 15px;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-label {
+            background-color: #1e1e1e;
+            color: white;
+            border: 1px solid #444;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        a {
+            color: #4eaaff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Добро пожаловать, {{ username }}!</h1>
+
+    <h3>Загрузка файла</h3>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="file-upload">
+            <label class="file-upload-label" for="fileInput">Выбрать файл</label>
+            <input type="file" name="file" id="fileInput" required>
+        </div>
+        <input type="submit" value="Загрузить">
+    </form>
+
+    <h3>Файлы:</h3>
+    <ul>
+        {% for file in files %}
+            <li><a href="/files/{{ username }}/{{ file }}">{{ file }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        const input = document.getElementById('fileInput');
+        const label = document.querySelector('.file-upload-label');
+
+        input.addEventListener('change', function () {
+            if (input.files.length > 0) {
+                label.textContent = input.files[0].name;
+            } else {
+                label.textContent = "Выбрать файл";
+            }
+        });
+    </script>
+</body>
+</html>
