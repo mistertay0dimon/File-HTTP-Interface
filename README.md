@@ -22,14 +22,10 @@
   <h2>How host it?</h2>
     <p>You need a python interpreter 3.13</p>
     <p>And, start file "server.py":</p>
-```python
-python server.py
-```
-<p>If you need python3 to start:</p>
-    ```python
-    python3 server.py
-    ```
+    <p>python server.py</p>
+    <p>If you need python3 to start:</p>
+    <p>python3 server.py</p>
 <h2>Requirements:</h2>
-<p>Framework Flask</p>
+    <p>Framework Flask</p>
 </body>
 </html>
