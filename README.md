@@ -7,6 +7,7 @@
   <p>Storing and downloading files</p>
   <p>Authorization</p>
   <p>Admin-panel</p>
+  <p>Adding folders</p>
   <h2>How use it?</h2>
   <p>Since interface in Russian, it's a guide how use it:</p>
   <p>Click on "Выберите файл" (Select a file)</p>
