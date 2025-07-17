@@ -75,10 +75,20 @@
         a:hover {
             text-decoration: underline;
         }
+
+        .folder {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <h1>Добро пожаловать, {{ username }}!</h1>
+
+    <h3>Создать папку</h3>
+    <form method="POST">
+        <input type="text" name="folder_name" placeholder="Имя папки" required>
+        <input type="submit" value="Создать">
+    </form>
 
     <h3>Загрузка файла</h3>
     <form method="POST" enctype="multipart/form-data">
@@ -89,10 +99,22 @@
         <input type="submit" value="Загрузить">
     </form>
 
-    <h3>Файлы:</h3>
+    <h3>Содержимое:</h3>
     <ul>
-        {% for file in files %}
-            <li><a href="/files/{{ username }}/{{ file }}">{{ file }}</a></li>
+        {% if subdir %}
+            <li><a href="{{ url_for('dashboard', subdir=subdir.rsplit('/', 1)[0]) }}">⬅ Назад</a></li>
+        {% endif %}
+
+        {% for entry in entries %}
+            {% if entry.is_dir %}
+                <li class="folder">
+                    📁 <a href="{{ url_for('dashboard', subdir=entry.path) }}">{{ entry.name }}</a>
+                </li>
+            {% else %}
+                <li>
+                    📄 <a href="/files/{{ username }}/{{ entry.path }}">{{ entry.name }}</a>
+                </li>
+            {% endif %}
         {% endfor %}
     </ul>
 
