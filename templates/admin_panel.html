@@ -111,7 +111,13 @@
         {% for username, data in users.items() %}
             <tr>
                 <td>{{ username }}</td>
-                <td>{{ data.role }}</td>
+                <td>
+                    {% if data.role == 'admin' %}
+                        Администратор
+                    {% else %}
+                        Пользователь
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
         </tbody>
