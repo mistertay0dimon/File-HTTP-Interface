@@ -14,7 +14,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 ADMIN_USERNAME = "dimon"
 ADMIN_PASS_FILE = "admin_pass.txt"
 USERS_FILE = "users.json"
-
+ALLOWED_ROLES = {"admin", "user"}
 
 def generate_admin_password():
     digits = ''.join(str(random.randint(0, 9)) for _ in range(8))
@@ -26,21 +26,26 @@ def generate_admin_password():
     print(f"[SERVER]: Admin user: {ADMIN_USERNAME}")
     return digits
 
-
 def load_users():
     if not os.path.exists(USERS_FILE):
         return {}
     with open(USERS_FILE, "r") as f:
-        return json.load(f)
-
+        users = json.load(f)
+    changed = False
+    for name, data in users.items():
+        role = data.get("role", "user")
+        if role not in ALLOWED_ROLES:
+            users[name]["role"] = "user"
+            changed = True
+    if changed:
+        save_users(users)
+    return users
 
 def save_users(users):
     with open(USERS_FILE, "w") as f:
         json.dump(users, f, indent=2)
 
-
 users = load_users()
-
 
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -53,10 +58,6 @@ def login():
                 return "Admin password not generated.", 500
             with open(ADMIN_PASS_FILE, "r") as f:
                 admin_pass = f.read().strip()
-
-            # Debug output
-            print(f"[LOGIN DEBUG] Admin login attempt - input: '{password_input}', expected: '{admin_pass}'")
-
             if password_input != admin_pass:
                 return render_template("invalid_password.html"), 403
             session["username"] = username
@@ -67,17 +68,20 @@ def login():
             return render_template("invalid_password.html"), 403
 
         stored_pass = users[username].get("password", "").strip()
-        # Debug output
-        print(f"[LOGIN DEBUG] User login attempt - user: '{username}', input: '{password_input}', stored: '{stored_pass}'")
         if password_input != stored_pass:
             return render_template("invalid_password.html"), 403
 
+        role = users[username].get("role", "user")
+        if role not in ALLOWED_ROLES:
+            role = "user"
+            users[username]["role"] = "user"
+            save_users(users)
+
         session["username"] = username
-        session["role"] = users[username].get("role", "user")
+        session["role"] = role
         return redirect(url_for("dashboard"))
 
     return render_template("login.html")
-
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -100,16 +104,13 @@ def register():
 
     return render_template("register.html")
 
-
 def admin_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         if session.get("role") != "admin":
             return "Error entering in admin panel: Permission denied.", 403
         return func(*args, **kwargs)
-
     return wrapper
-
 
 @app.route("/dashboard", defaults={"subdir": ""}, methods=["GET", "POST"])
 @app.route("/dashboard/<path:subdir>", methods=["GET", "POST"])
@@ -146,7 +147,6 @@ def dashboard(subdir):
 
     return render_template("dashboard.html", username=username, role=role, entries=entries, subdir=subdir)
 
-
 @app.route("/admin_panel", methods=["GET", "POST"])
 @admin_required
 def admin_panel():
@@ -157,20 +157,14 @@ def admin_panel():
                 func = request.environ.get('werkzeug.server.shutdown')
                 if func:
                     func()
-                else:
-                    print("Не удалось выключить сервер корректно.")
                 threading.Timer(1.0, lambda: os._exit(0)).start()
-
             shutdown_server()
             return render_template("server_offing.html")
-
     return render_template("admin_panel.html", users=users)
-
 
 @app.route("/files/<username>/<path:filename>")
 def download_file(username, filename):
     return send_from_directory(os.path.join(UPLOAD_DIR, username), filename)
-
 
 if __name__ == "__main__":
     generate_admin_password()
